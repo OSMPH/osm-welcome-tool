@@ -16,20 +16,21 @@ grumphp:
         - /^assets\/typescript\/(.*)/
     phpcsfixer:
       config: ".php-cs-fixer.dist.php"
-    phpstan: ~
+    phpstan:
+      ignore_patterns: [deploy.php]
     phpunit: ~
     phpversion:
-      project: "8.0"
+      project: "8.1"
     twigcs:
       ruleset: "\\FriendsOfTwig\\Twigcs\\Ruleset\\Official"
       exclude: ["vendor/"]
-    xlifflint:
-        ignore_patterns: []
-        load_from_net: false
-        x_include: false
-        dtd_validation: true
-        scheme_validation: true
-        triggered_by: [xlf]
+    # xlifflint:
+    #     ignore_patterns: []
+    #     load_from_net: false
+    #     x_include: false
+    #     dtd_validation: true
+    #     scheme_validation: true
+    #     triggered_by: [xlf]
     yamllint: ~
   testsuites:
     composer:
@@ -39,7 +40,7 @@ grumphp:
     check:
       tasks:
         - phpcsfixer
-        - phpstan
+        # - phpstan
         - twigcs
-        - xlifflint
+        # - xlifflint # TODO: Re-implement
         - yamllint

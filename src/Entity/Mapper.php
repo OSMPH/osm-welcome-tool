@@ -3,71 +3,49 @@
 namespace App\Entity;
 
 use App\Repository\MapperRepository;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MapperRepository::class)
- */
+#[ORM\Entity(repositoryClass: MapperRepository::class)]
 class Mapper
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $region;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $display_name = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $display_name;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $account_created = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $account_created;
+    #[ORM\Column(type: 'integer')]
+    private ?int $changesets_count = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $changesets_count;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $status = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $status;
+    #[ORM\OneToMany(targetEntity: Changeset::class, mappedBy: 'mapper', orphanRemoval: true)]
+    private Collection $changesets;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Changeset::class, mappedBy="mapper", orphanRemoval=true)
-     */
-    private $changesets;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $image = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $image;
+    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'mapper', orphanRemoval: true)]
+    private Collection $notes;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Note::class, mappedBy="mapper", orphanRemoval=true)
-     */
-    private $notes;
+    #[ORM\OneToOne(targetEntity: Welcome::class, mappedBy: 'mapper', cascade: ['persist'])]
+    private ?Welcome $welcome = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Welcome::class, mappedBy="mapper", cascade={"persist"})
-     */
-    private $welcome;
+    #[ORM\ManyToMany(targetEntity: Region::class, inversedBy: 'mappers')]
+    private Collection $region;
 
     public function __construct()
     {
         $this->changesets = new ArrayCollection();
         $this->notes = new ArrayCollection();
+        $this->region = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,18 +56,6 @@ class Mapper
     public function setId(int $id): self
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getRegion(): ?string
-    {
-        return $this->region;
-    }
-
-    public function setRegion(string $region): self
-    {
-        $this->region = $region;
 
         return $this;
     }
@@ -162,11 +128,9 @@ class Mapper
 
     public function removeChangeset(Changeset $changeset): self
     {
-        if ($this->changesets->removeElement($changeset)) {
-            // set the owning side to null (unless already changed)
-            if ($changeset->getMapper() === $this) {
-                $changeset->setMapper(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->changesets->removeElement($changeset) && $changeset->getMapper() === $this) {
+            $changeset->setMapper(null);
         }
 
         return $this;
@@ -204,11 +168,9 @@ class Mapper
 
     public function removeNote(Note $note): self
     {
-        if ($this->notes->removeElement($note)) {
-            // set the owning side to null (unless already changed)
-            if ($note->getMapper() === $this) {
-                $note->setMapper(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->notes->removeElement($note) && $note->getMapper() === $this) {
+            $note->setMapper(null);
         }
 
         return $this;
@@ -216,13 +178,9 @@ class Mapper
 
     public function getFirstChangeset(): Changeset
     {
-        /** @var Changeset[] */
-        $changesets = $this->getChangesets()->toArray();
+        $changesets = $this->changesets->toArray();
 
-        /** @var DateTimeImmutable[] */
-        $createdAt = array_map(function (Changeset $changeset): ?DateTimeImmutable {
-            return $changeset->getCreatedAt();
-        }, $changesets);
+        $createdAt = array_map(static fn (Changeset $changeset): ?\DateTimeImmutable => $changeset->getCreatedAt(), $changesets);
 
         array_multisort($createdAt, \SORT_ASC, $changesets);
 
@@ -242,6 +200,30 @@ class Mapper
         }
 
         $this->welcome = $welcome;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, region>
+     */
+    public function getRegion(): Collection
+    {
+        return $this->region;
+    }
+
+    public function addRegion(region $region): self
+    {
+        if (!$this->region->contains($region)) {
+            $this->region->add($region);
+        }
+
+        return $this;
+    }
+
+    public function removeRegion(region $region): self
+    {
+        $this->region->removeElement($region);
 
         return $this;
     }

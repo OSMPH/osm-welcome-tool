@@ -2,23 +2,21 @@
 
 ## Translation
 
-**Your want to translate the tool in your own language ?**
+[![Crowdin](https://badges.crowdin.net/osm-welcome-tool/localized.svg)](https://crowdin.com/project/osm-welcome-tool)
 
-All translations are stored here: <https://github.com/osmbe/osm-welcome-tool/tree/2.x/translations>
+### You want to add a new language ?
 
-To add a new language, copy the [`messages+intl-icu.en.xlf` file](https://github.com/osmbe/osm-welcome-tool/blob/2.x/translations/messages%2Bintl-icu.en.xlf) and update all the `target` properties to the correct translation in your language.
+Request a new language by creating a new issue ; the translation is managed via [Crowdin](https://crowdin.com/), once the language is added to Crowndin, you'll be able to translate it here: <https://crowdin.com/project/osm-welcome-tool>
 
-You don't need to provide translations of `security.en.xlf` and `validators.en.xlf` as these are part of the Symfony framework.
+### You want to contribute to the translation of the tool in your own language ?
 
-Once done, save your file as `messages+intl-icu.##.xlf` by replacing `##` by the [ISO 639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language.
-
-Upload your new file to our [`translations/`](https://github.com/osmbe/osm-welcome-tool/tree/2.x/translations) folder and create a Pull Request, we'll take it from there!
+Translation is managed via [Crowdin](https://crowdin.com/), go to <https://crowdin.com/project/osm-welcome-tool> to contribute!
 
 ---
 
 ## Add a new region
 
-**You want to use the Welcome Tool in your region and the region is not available yet ?**
+### You want to use the Welcome Tool in your region and the region is not available yet ?
 
 A region can be **any** geographical region defined by a geometry. It can be a whole country, a province, a city, a neighborhood, ...
 
@@ -38,7 +36,7 @@ Create a Pull Request with those 2 steps and we'll take it from there!
 
 ## Add or update message template(s) for your region
 
-**You want to add or update a message template for your region ?**
+### You want to add or update a message template for your region ?
 
 All messages templates are [Markdown](https://daringfireball.net/projects/markdown/) files stored in the [`templates/messages`](https://github.com/osmbe/osm-welcome-tool/tree/2.x/templates/messages) folder.
 
@@ -57,3 +55,26 @@ Each message template file has a YAML front matter containing the following prop
 After the YAML front matter, you can put any text using Markdown formatting. You can also use placeholders (for example, `{{ mapper.displayName }}` will be replaced by the username of the mapper).
 
 Create a Pull Request with the new (or updated files)!
+
+### What variables/placeholders can you use in your template ?
+
+- Region (see [`regions.yaml`](config/regions.yaml)):
+
+  - `region.name`: Name of the region
+  - `region.flag`: Flag (emoji) of the region
+  - `region.key`: Name key of the region
+  - `region.continent`: Continent key of the region
+
+- Mapper (see [`Mapper.php`](src/Entity/Mapper.php)):
+
+  - `mapper.id`: Mapper's OpenStreetMap identifier
+  - `mapper.displayName`: Mapper's OpenStreetMap display name
+  - `mapper.image`: Mapper's OpenStreetMap profile picture (URL)
+  - `mapper.accountCreated|format_datetime()`: Mapper's OpenStreetMap account creation datetime (see [Twig documentation](https://twig.symfony.com/doc/3.x/filters/format_datetime.html))
+  - `mapper.changesetsCount`: Mapper's count of OpenStreetMap changesest (at the time of detection by the Welcome Tool)
+
+- Current user connected to the app (see [`User.php`](src/Entity/User.php)):
+
+  - `app.user.id`: OpenStreetMap identifier of the user
+  - `app.user.displayName`: OpenStreetMap display name of the user
+  - `app.user.image`: OpenStreetMap profile picture (URL) of the user

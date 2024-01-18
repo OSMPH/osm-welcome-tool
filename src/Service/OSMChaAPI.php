@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use ErrorException;
 use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -11,8 +10,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class OSMChaAPI
 {
     public function __construct(
-        private HttpClientInterface $osmchaClient,
-        private ValidatorInterface $validator
+        private readonly HttpClientInterface $osmchaClient,
+        private readonly ValidatorInterface $validator
     ) {
     }
 
@@ -37,7 +36,7 @@ class OSMChaAPI
         $validate = $this->validator->validate($id, new Uuid());
 
         if ($validate->count() > 0) {
-            throw new ErrorException($validate->get(0)->getMessage());
+            throw new \ErrorException($validate->get(0)->getMessage());
         }
 
         $response = $this->osmchaClient->request(
@@ -59,7 +58,7 @@ class OSMChaAPI
         $validate = $this->validator->validate($id, new Uuid());
 
         if ($validate->count() > 0) {
-            throw new ErrorException($validate->get(0)->getMessage());
+            throw new \ErrorException($validate->get(0)->getMessage());
         }
 
         $response = $this->osmchaClient->request(

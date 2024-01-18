@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class OpenStreetMapAPI
 {
     public function __construct(
-        private HttpClientInterface $osmClient
+        private readonly HttpClientInterface $osmClient
     ) {
     }
 
@@ -26,7 +26,7 @@ class OpenStreetMapAPI
     {
         $response = $this->osmClient->request(
             'GET',
-            sprintf('changesets.xml?%s', http_build_query(['user' => $id])),
+            sprintf('changesets.xml?%s', http_build_query(['user' => $id]))
         );
 
         return $response;

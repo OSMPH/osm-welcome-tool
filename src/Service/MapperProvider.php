@@ -4,12 +4,11 @@ namespace App\Service;
 
 use App\Entity\Mapper;
 use App\Repository\MapperRepository;
-use DateTime;
 
 class MapperProvider
 {
     public function __construct(
-        private MapperRepository $repository
+        private readonly MapperRepository $repository
     ) {
     }
 
@@ -19,7 +18,7 @@ class MapperProvider
         if (null === $mapper) {
             $mapper = new Mapper();
             $mapper->setId($array['user']['id']);
-            $mapper->setAccountCreated(new DateTime($array['user']['account_created']));
+            $mapper->setAccountCreated(new \DateTime($array['user']['account_created']));
             $mapper->setStatus('new');
             // $mapper->setRegion($region);
         }
